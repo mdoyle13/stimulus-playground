@@ -3,29 +3,24 @@ import { Controller } from "stimulus";
 export default class extends Controller {
   static targets = [ "slide" ]
   
-  connect() {
-    console.log(this.slideTargets.length)
-  }
+  // connect() {
+  //   console.log(this.slideTargets.length)
+  // }
 
   initialize() {
-    this.showSlide(0)
+    this.showCurrentSlide()
     
     // example of how to set some data attributes on the html
     this.data.set("initialized", true)
-    
-    console.log(this.data.get("alert"))
-  
-    if (this.data.get("alert") == "true") {
-      alert('i should alert')
-    }
   }
   
   isFirstSlide() {
-    if ((this.index -1) == 0) {
+    if (this.index == 0) {
       return true
     } else {
       return false
     }
+    return false
   }
   
   isLastSlide(idx) {
@@ -38,25 +33,44 @@ export default class extends Controller {
 
   next() {
     if (this.isLastSlide(this.index)) {
-      alert('sorry last slide');
+      this.alert = "true"
     } else {
-        this.showSlide(this.index + 1)
+        this.index++
     }
     
   }
 
   previous() {
-    if (this.isFirstSlide) {
-      alert("sorry can't go back anymore")
+    if (this.isFirstSlide()) {
+      //
     } else {
-      this.showSlide(this.index - 1)  
+      this.index--
     }
   }
-
-  showSlide(index) {
-    this.index = index
+  
+  get index() {
+    return parseInt(this.data.get("index"))
+  }
+  
+  set index(value) {
+    console.log('index set', value)
+    this.data.set("index", value)
+    this.showCurrentSlide()
+  }
+  
+  get alert() {
+    console.log('getter for alert called')
+    return this.data.get("alert")
+  }
+  
+  set alert(param) {
+    this.data.set("alert", param)
+    console.log('i did it')
+  }
+  
+  showCurrentSlide() {
     this.slideTargets.forEach((el, i) => {
-      el.classList.toggle("slide--current", index == i)
+      el.classList.toggle("slide--current", this.index == i)
     })
   }
 }
